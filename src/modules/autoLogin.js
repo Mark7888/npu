@@ -1,6 +1,7 @@
 const $ = window.jQuery;
 const utils = require("../utils");
 const storage = require("../storage");
+const captcha = require("../captcha");
 
 // Returns users with stored credentials
 function getLoginUsers() {
@@ -96,6 +97,7 @@ function initUserSelect() {
 
     $("#user").val(users[$(this).get(0).selectedIndex]);
     $("#pwd").val(atob(storage.get("users", utils.getDomain(), users[$(this).get(0).selectedIndex], "password")));
+    $("#loginCaptcha img").on("load", captcha.doCaptchaJQ);
   });
 
   $("input[type=button].login_button")
@@ -156,6 +158,13 @@ function initUserSelect() {
   $("#user").parent().append(selectField);
   showSelect();
   selectField.trigger("change");
+
+  const anchorElement = $("<a>")
+    .text("Set TrueChaptcha credentials")
+    .attr("href", "JavaScript:void(0)")
+    .click(captcha.captchaCredsPrompt);
+
+  $("#captchaRow .login_input").append(anchorElement);
 }
 
 let loginTimer;
